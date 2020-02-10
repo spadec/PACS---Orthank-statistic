@@ -1,0 +1,17 @@
+{
+    "msgLagreOrthank":"This is a large Orthanc server. Showing only 100 patients to avoid performance issue. Make sure to use lookup if targeting specific patients!",
+    "title":"antis:PACS",
+    "main":"Главная",
+    "osimis":"Просмотр снимков",
+    "stat":"Статистика",
+    "MO":"Учреждение",
+    "patientID":"ИИН пациента",
+    "patientName":"ФИО пациента",
+    "birthDate":"Дата рождения пациента",
+    "studyDate":"Дата исследования",
+    "sex":"Пол",
+    "age":"Возраст",
+    "description":"Описание",
+    "serial":"Серия",
+    "view":"Просмотр"
+}
