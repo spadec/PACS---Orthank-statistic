@@ -7,7 +7,9 @@
     $("body").toggleClass("sidebar-toggled");
     $(".sidebar").toggleClass("toggled");
   });
-
+  if(3>=4) {
+    
+  }
   // Prevent the content wrapper from scrolling when the fixed side navigation hovered over
   $('body.fixed-nav .sidebar').on('mousewheel DOMMouseScroll wheel', function(e) {
     if ($(window).width() > 768) {
@@ -36,5 +38,18 @@
     }, 1000, 'easeInOutExpo');
     event.preventDefault();
   });
+
+  // $('.sw').click(function () {
+  //     $.ajax({
+  //       type: "POST",
+  //       url: "ajax/setServer.php",
+  //       data: {type:$(this).data('s')},
+  //       dataType: "json",
+  //       success: function (response) {
+  //         console.log(response);
+          
+  //       }
+  //     });
+  // });
 
 })(jQuery); // End of use strict
