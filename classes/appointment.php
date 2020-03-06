@@ -108,7 +108,32 @@ class dcm4chee {
 	{
 		$this->config = $config;
 	}
+	// $this->config['auth'].'?'.'grant_type=client_credentials&client_id=curl&client_secret='.$this->config['secret']
+	public function SetToken() {
+		$ch = curl_init();
+
+		curl_setopt($ch, CURLOPT_URL, 'https://192.168.10.60:8843/auth/realms/dcm4che/protocol/openid-connect/token');
+		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+		curl_setopt($ch, CURLOPT_POST, 1);
+		curl_setopt($ch, CURLOPT_POSTFIELDS, "grant_type=client_credentials&client_id=curl&client_secret=c56c6cbc-6025-4a58-b4fe-a2334532ca9d");
+
+		$headers = array();
+		$headers[] = 'Content-Type: application/x-www-form-urlencoded';
+		curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+		
+		$result = curl_exec($ch);
+		if (curl_errno($ch)) {
+			echo 'Error:' . curl_error($ch);
+		}
+		curl_close($ch);
+		return json_decode($result);
+	}
+
 	public function SetRequest($service, $post_params=array(),$method="post"){
+		$token = $this->SetToken();
+		
 		$ch1 = curl_init($this->config['host']);
 		if($post_params && count($post_params)){
 			$post_params = json_encode($post_params);
@@ -132,15 +157,41 @@ class dcm4chee {
 		// $date=http_build_query($post_params);
 		curl_setopt($ch1, CURLOPT_SSL_VERIFYHOST, false );
 		curl_setopt($ch1, CURLOPT_SSL_VERIFYPEER, false );
-		curl_setopt($ch1, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);       
+		curl_setopt($ch1, CURLOPT_HTTPHEADER, array(
+			'Content-Type: application/json',
+			'Authorization: Bearer ' . $token->access_token
+		));       
 		// curl_setopt($ch1, CURLOPT_USERPWD, $this->config['login'] . ":" . $this->config['pass']);
 		curl_setopt($ch1, CURLOPT_URL, $this->config['host'].":".$this->config['port'].$service);       
 		curl_setopt($ch1, CURLOPT_RETURNTRANSFER, true);
 		$response = curl_exec( $ch1 );
 		curl_close( $ch1 );
 		$response=json_decode($response);
-	return $response;
+		return $response;
 	}
+
+	public function getPicture($study , $series , $obj) {
+		$token = $this->SetToken();
+		
+		$ch1 = curl_init($this->config['host']);
+		
+		// $date=http_build_query($post_params);
+		curl_setopt($ch1, CURLOPT_SSL_VERIFYHOST, false );
+		curl_setopt($ch1, CURLOPT_SSL_VERIFYPEER, false );
+		
+		curl_setopt($ch1, CURLOPT_HTTPHEADER, array(
+			'Content-Type: application/json',
+			'Authorization: Bearer ' . $token->access_token
+		));       
+		// curl_setopt($ch1, CURLOPT_USERPWD, $this->config['login'] . ":" . $this->config['pass']);
+		curl_setopt($ch1, CURLOPT_URL, "https://".$this->config['host'].":8443/dcm4chee-arc/aets/DCM4CHEE/wado?requestType=WADO&studyUID=".$study."&seriesUID=".$series."&objectUID=".$obj."&contentType=image/jpeg&frameNumber=1");       
+		curl_setopt($ch1, CURLOPT_RETURNTRANSFER, true);
+		$response = curl_exec( $ch1 );
+		curl_close( $ch1 );
+		$response=json_decode($response);
+		return $response;
+	}
+
 	public function prettyDate($str = null,$sep = null)	{
 		if ($str) {
 			$year = $str[0]. $str[1]. $str[2]. $str[3];
@@ -160,8 +211,24 @@ class dcm4chee {
 		return $h.$sep.$m.$sep.$s;
 	}
 	public function getViewLink($study,$series,$obj){
-		$params="requestType=WADO&studyUID=".$study."&seriesUID=".$series."&objectUID=".$obj."&contentType=image/jpeg&frameNumber=1";
-		return $this->config['protocol'].$this->config['host'].":".$this->config['port'].$this->config["viewer"]."?".$params;
+		$token = $this->SetToken();
+		
+		$ch1 = curl_init($this->config['host']);
+		
+		// $date=http_build_query($post_params);
+		curl_setopt($ch1, CURLOPT_SSL_VERIFYHOST, false );
+		curl_setopt($ch1, CURLOPT_SSL_VERIFYPEER, false );
+		curl_setopt($ch1, CURLOPT_HTTPHEADER, array(
+			'Content-Type: application/json',
+			'Authorization: Bearer ' . $token->access_token
+		));       
+		// curl_setopt($ch1, CURLOPT_USERPWD, $this->config['login'] . ":" . $this->config['pass']);
+		curl_setopt($ch1, CURLOPT_URL, "https://192.168.10.60:8443/dcm4chee-arc/aets/AS_RECEIVED/wado?studyUID=".$study."&seriesUID=".$series."&objectUID=".$obj."&contentType=image/jpeg&frameNumber=1");       
+		curl_setopt($ch1, CURLOPT_RETURNTRANSFER, true);
+		$response = curl_exec( $ch1 );
+		curl_close( $ch1 );
+		$response=json_decode($response);
+		return $response;
 	}
 	public function getSeriesLink(){
 		return "#";
@@ -179,7 +246,7 @@ class dcm4chee {
 		return $this->SetRequest($service,"","get");
 	}
 	public function getSeries($seriesID=""){
-		$service = "/dcm4chee-arc/aets/DCM4CHEE/rs/series/".$seriesID;
+		$service = "/dcm4chee-arc/aets/DCM4CHEE/rs/series?".$seriesID;
 		return $this->SetRequest($service,"","get");
 	}
 

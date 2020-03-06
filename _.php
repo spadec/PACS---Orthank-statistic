@@ -11,10 +11,10 @@
     );
     $dcm = new dcm4chee($config);
 
-    $res1 = $dcm->getPath();
+    
     // $res = json_encode($res1);
     // foreach ($res1 as $el) {
-    print_r($res1);
+    // print_r($res1);
     // }
     
 

@@ -11,6 +11,8 @@ $config = array(
     'port' => $port,
     'protocol'=> "http://",
     'viewer'=> $viewer,
+    'auth' => 'https://192.168.10.60:8843/auth/realms/dcm4che/protocol/openid-connect/token/',
+    'secret'=>'c56c6cbc-6025-4a58-b4fe-a2334532ca9d'
 );
 $db = $_SESSION['server_type']==1? new orthank($config) : new dcm4chee($config);
 ?>

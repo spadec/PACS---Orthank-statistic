@@ -234,11 +234,13 @@ $lastdate = "";
                           echo "<td>".$db->prettyDate($el->{'00080020'}->Value[0],'-')." ".$db->prettyTime($el->{'00080030'}->Value[0] , ':')."</td>"; 
                           echo "<td>".$el->{'0008103E'}->Value[0]."</td>";
                           echo "<td data-series='".$el->{'0020000E'}->Value[0]."'>series</td>";
-                          echo "<td><a target='_blank' href=".$db->getViewLink($el->{'0020000D'}->Value[0] , $el->{'0020000E'}->Value[0] , $el->{'00080018'}->Value[0]).">Просмотр</a></td>";
+                          echo "<td><a class='view' data-st='".$el->{'0020000D'}->Value[0]."' data-ser='".$el->{'0020000E'}->Value[0]."' data-obj='".$el->{'00080018'}->Value[0]."' >Просмотр</a></td>";
+                          // echo "<td><img  src=".$db->getPicture($el->{'0020000D'}->Value[0] , $el->{'0020000E'}->Value[0] , $el->{'00080018'}->Value[0]).">Просмотр</td>";
                           echo "</tr>";
                         }
                       }
-                      
+                      // href='dcm4Picture.php?study=".$el->{'0020000D'}->Value[0]."&ser=".$el->{'0020000E'}->Value[0]."&obj=".$el->{'00080018'}->Value[0]."'
+                      // href='dcm4Picture.php?study=".$el->{'0020000D'}->Value[0]."&ser=".$el->{'0020000E'}->Value[0]."&obj=".$el->{'00080018'}->Value[0]."'
                     }
                     else{
                       function getAge1($then) {
@@ -260,14 +262,15 @@ $lastdate = "";
                           echo "<td>".$db->prettyDate($el->{'00080020'}->Value[0],'-')." ".$db->prettyTime($el->{'00080030'}->Value[0] , ':')."</td>"; 
                           echo "<td>".$el->{'0008103E'}->Value[0]."</td>";
                           echo "<td data-series='".$el->{'0020000E'}->Value[0]."'>series</td>";
-                          echo "<td><a target='_blank' href=".$db->getViewLink($el->{'0020000D'}->Value[0] , $el->{'0020000E'}->Value[0] , $el->{'00080018'}->Value[0]).">Просмотр</a></td>";
+                          echo "<td><a class='view' data-st='".$el->{'0020000D'}->Value[0]."' data-ser='".$el->{'0020000E'}->Value[0]."' data-obj='".$el->{'00080018'}->Value[0]."'>Просмотр</a></td>";
                           echo "</tr>";
                       }
                     }
                 ?>
                 </tbody>
               </table>
-            </div>
+
+          </div>
           </div>
           <div class="card-footer small text-muted">Последнее обновление в <?php echo $lastdate; ?></div>
         </div>
@@ -334,16 +337,32 @@ $lastdate = "";
   <script>
     $(document).ready(function () {
       $('.sw[data-s="<?php echo $_SESSION['server_type']?>"]').addClass('active').addClass('focus');
-      $(document).delegate('[data-series]' , 'click' , function () {
+      // $(document).delegate('[data-series]' , 'click' , function () {
+      //   $.ajax({
+      //     type:'POST',
+      //     url:'http://192.168.10.60:8080/dcm4chee-arc/aets/DCM4CHEE/rs/sudies',
+      //     dataType:'json',
+      //     // data:{SeriesID:$(this).data('series')},
+      //     success:function(response) {
+      //       console.log(response);
+      //     }
+      //   })
+      // });
+
+      $(document).delegate('a.view' , 'click' , function () {
         $.ajax({
-          type:'GET',
-          url:'http://192.168.10.60:8080/dcm4chee-arc/aets/DCM4CHEE/rs/sudies',
-          dataType:'json',
-          // data:{SeriesID:$(this).data('series')},
+          type:'POST',
+          url:'/ajax/dcm4Picture.php',
+          data:{
+            st:$(this).data('st'),
+            ser:$(this).data('ser'),
+            obj:$(this).data('obj')
+          },
+          dataType:'text',
           success:function(response) {
             console.log(response);
           }
-        })
+        });
       });
     });
   </script>
