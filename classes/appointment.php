@@ -117,7 +117,7 @@ class dcm4chee {
 		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 		curl_setopt($ch, CURLOPT_POST, 1);
-		curl_setopt($ch, CURLOPT_POSTFIELDS, "grant_type=client_credentials&client_id=curl&client_secret=c56c6cbc-6025-4a58-b4fe-a2334532ca9d");
+		curl_setopt($ch, CURLOPT_POSTFIELDS, "grant_type=client_credentials&client_id=curl&client_secret=3bf9ddfd-6590-446b-8c8e-83df0ae85ea6");
 
 		$headers = array();
 		$headers[] = 'Content-Type: application/x-www-form-urlencoded';
@@ -171,24 +171,23 @@ class dcm4chee {
 	}
 
 	public function getPicture($study , $series , $obj) {
+		header("Content-Type: text/html; charset=utf-8");
 		$token = $this->SetToken();
-		
-		$ch1 = curl_init($this->config['host']);
+		$ch1 = curl_init($this->config['host']);    
 		
 		// $date=http_build_query($post_params);
 		curl_setopt($ch1, CURLOPT_SSL_VERIFYHOST, false );
 		curl_setopt($ch1, CURLOPT_SSL_VERIFYPEER, false );
-		
 		curl_setopt($ch1, CURLOPT_HTTPHEADER, array(
 			'Content-Type: application/json',
 			'Authorization: Bearer ' . $token->access_token
 		));       
+		curl_setopt($ch1, CURLOPT_ENCODING, 'UTF-8');
 		// curl_setopt($ch1, CURLOPT_USERPWD, $this->config['login'] . ":" . $this->config['pass']);
-		curl_setopt($ch1, CURLOPT_URL, "https://".$this->config['host'].":8443/dcm4chee-arc/aets/DCM4CHEE/wado?requestType=WADO&studyUID=".$study."&seriesUID=".$series."&objectUID=".$obj."&contentType=image/jpeg&frameNumber=1");       
+		curl_setopt($ch1, CURLOPT_URL, "https://".$this->config['host'].":8080/dcm4chee-arc/aets/DCM4CHEE/wado/?requestType=WADO&studyUID=".$study."&seriesUID=".$series."&objectUID=".$obj);       
 		curl_setopt($ch1, CURLOPT_RETURNTRANSFER, true);
 		$response = curl_exec( $ch1 );
 		curl_close( $ch1 );
-		$response=json_decode($response);
 		return $response;
 	}
 
@@ -216,14 +215,16 @@ class dcm4chee {
 		$ch1 = curl_init($this->config['host']);
 		
 		// $date=http_build_query($post_params);
-		curl_setopt($ch1, CURLOPT_SSL_VERIFYHOST, false );
-		curl_setopt($ch1, CURLOPT_SSL_VERIFYPEER, false );
+		// curl_setopt($ch1, CURLOPT_SSL_VERIFYHOST, false );
+		// curl_setopt($ch1, CURLOPT_SSL_VERIFYPEER, false );
 		curl_setopt($ch1, CURLOPT_HTTPHEADER, array(
 			'Content-Type: application/json',
 			'Authorization: Bearer ' . $token->access_token
 		));       
+		curl_setopt($ch1, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);       
+		curl_setopt($ch1, CURLOPT_USERPWD, "admin:admin");
 		// curl_setopt($ch1, CURLOPT_USERPWD, $this->config['login'] . ":" . $this->config['pass']);
-		curl_setopt($ch1, CURLOPT_URL, "https://192.168.10.60:8443/dcm4chee-arc/aets/AS_RECEIVED/wado?studyUID=".$study."&seriesUID=".$series."&objectUID=".$obj."&contentType=image/jpeg&frameNumber=1");       
+		curl_setopt($ch1, CURLOPT_URL, "http://192.168.10.60:8042/dcm4chee-arc/aets/DCM4CHEE/wado?studyUID=".$study."&seriesUID=".$series."&objectUID=".$obj."&contentType=image/jpeg&frameNumber=1");       
 		curl_setopt($ch1, CURLOPT_RETURNTRANSFER, true);
 		$response = curl_exec( $ch1 );
 		curl_close( $ch1 );

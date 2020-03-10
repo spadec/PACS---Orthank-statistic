@@ -348,7 +348,6 @@ $lastdate = "";
       //     }
       //   })
       // });
-
       $(document).delegate('a.view' , 'click' , function () {
         $.ajax({
           type:'POST',
@@ -358,7 +357,7 @@ $lastdate = "";
             ser:$(this).data('ser'),
             obj:$(this).data('obj')
           },
-          dataType:'text',
+          dataType:'application/dicom',
           success:function(response) {
             console.log(response);
           }

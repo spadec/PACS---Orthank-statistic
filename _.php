@@ -11,12 +11,5 @@
     );
     $dcm = new dcm4chee($config);
 
-    
-    // $res = json_encode($res1);
-    // foreach ($res1 as $el) {
-    // print_r($res1);
-    // }
-    
-
 ?>
 </pre>
