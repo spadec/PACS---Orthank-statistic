@@ -1,4 +1,6 @@
 <?php
+header("charset=utf-8");
+
 function tohttp( $query ){
 
   $query_array = array();
@@ -157,6 +159,7 @@ $lastdate = "";
                   </div>
                 </div>
               </div>
+
               <div class="row align-items-end">
                 <div class="col-4">
                   <div class="form-group">
@@ -273,6 +276,9 @@ $lastdate = "";
           </div>
           </div>
           <div class="card-footer small text-muted">Последнее обновление в <?php echo $lastdate; ?></div>
+        
+          <img id="pic" src="" alt="">
+        
         </div>
       </div>
       <!-- /.container-fluid -->
@@ -357,7 +363,7 @@ $lastdate = "";
             ser:$(this).data('ser'),
             obj:$(this).data('obj')
           },
-          dataType:'application/dicom',
+          dataType:'text',
           success:function(response) {
             console.log(response);
           }

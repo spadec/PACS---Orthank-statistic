@@ -171,7 +171,7 @@ class dcm4chee {
 	}
 
 	public function getPicture($study , $series , $obj) {
-		header("Content-Type: text/html; charset=utf-8");
+		
 		$token = $this->SetToken();
 		$ch1 = curl_init($this->config['host']);    
 		
@@ -179,14 +179,18 @@ class dcm4chee {
 		curl_setopt($ch1, CURLOPT_SSL_VERIFYHOST, false );
 		curl_setopt($ch1, CURLOPT_SSL_VERIFYPEER, false );
 		curl_setopt($ch1, CURLOPT_HTTPHEADER, array(
-			'Content-Type: application/json',
+			// 'Accept: media-type CRLF', 
+			'Content-Type: application/dicom',
 			'Authorization: Bearer ' . $token->access_token
 		));       
 		curl_setopt($ch1, CURLOPT_ENCODING, 'UTF-8');
 		// curl_setopt($ch1, CURLOPT_USERPWD, $this->config['login'] . ":" . $this->config['pass']);
-		curl_setopt($ch1, CURLOPT_URL, "https://".$this->config['host'].":8080/dcm4chee-arc/aets/DCM4CHEE/wado/?requestType=WADO&studyUID=".$study."&seriesUID=".$series."&objectUID=".$obj);       
+		curl_setopt($ch1, CURLOPT_URL, "http://".$this->config['host'].":8080/dcm4chee-arc/aets/DCM4CHEE/rs/studies/".$study."?accept=application/zip");       
 		curl_setopt($ch1, CURLOPT_RETURNTRANSFER, true);
 		$response = curl_exec( $ch1 );
+		$fd = fopen("../log.txt", 'w') or die("не удалось создать файл");
+		fwrite($fd, str_replace("\r\n" , " " , $response));
+		fclose($fd);
 		curl_close( $ch1 );
 		return $response;
 	}
@@ -209,7 +213,7 @@ class dcm4chee {
 		$s = $str[4]. $str[5];
 		return $h.$sep.$m.$sep.$s;
 	}
-	public function getViewLink($study,$series,$obj){
+	public function getViewLink($study){
 		$token = $this->SetToken();
 		
 		$ch1 = curl_init($this->config['host']);
