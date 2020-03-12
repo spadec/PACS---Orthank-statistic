@@ -69,6 +69,16 @@ $lastdate = "";
 <!DOCTYPE html>
 <html lang="en">
 
+<style>
+  .view {
+    text-decoration: underline;
+    color: blue;
+  }
+  .view:hover {
+    cursor: pointer;
+  }
+</style>
+
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -237,7 +247,7 @@ $lastdate = "";
                           echo "<td>".$db->prettyDate($el->{'00080020'}->Value[0],'-')." ".$db->prettyTime($el->{'00080030'}->Value[0] , ':')."</td>"; 
                           echo "<td>".$el->{'0008103E'}->Value[0]."</td>";
                           echo "<td data-series='".$el->{'0020000E'}->Value[0]."'>series</td>";
-                          echo "<td><a class='view' data-st='".$el->{'0020000D'}->Value[0]."' data-ser='".$el->{'0020000E'}->Value[0]."' data-obj='".$el->{'00080018'}->Value[0]."' >Просмотр</a></td>";
+                          echo "<td><a class='view' href='#' data-st='".$el->{'0020000D'}->Value[0]."' data-ser='".$el->{'0020000E'}->Value[0]."' data-obj='".$el->{'00080018'}->Value[0]."' >".$lng->down."</a></td>";
                           // echo "<td><img  src=".$db->getPicture($el->{'0020000D'}->Value[0] , $el->{'0020000E'}->Value[0] , $el->{'00080018'}->Value[0]).">Просмотр</td>";
                           echo "</tr>";
                         }
@@ -358,6 +368,7 @@ $lastdate = "";
         $.ajax({
           type:'POST',
           url:'/ajax/dcm4Picture.php',
+          
           data:{
             st:$(this).data('st'),
             ser:$(this).data('ser'),
@@ -365,7 +376,9 @@ $lastdate = "";
           },
           dataType:'text',
           success:function(response) {
-            console.log(response);
+            var data = new Blob(["\ufeff", ['File content here']],{type:'plain/text'});
+            var file = response;
+            window.location.href=file;
           }
         });
       });

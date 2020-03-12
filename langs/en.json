@@ -13,5 +13,6 @@
     "age":"Возраст",
     "description":"Описание",
     "serial":"Серия",
-    "view":"Просмотр"
+    "view":"Просмотр",
+    "down":"Download"
 }

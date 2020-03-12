@@ -179,20 +179,26 @@ class dcm4chee {
 		curl_setopt($ch1, CURLOPT_SSL_VERIFYHOST, false );
 		curl_setopt($ch1, CURLOPT_SSL_VERIFYPEER, false );
 		curl_setopt($ch1, CURLOPT_HTTPHEADER, array(
-			// 'Accept: media-type CRLF', 
-			'Content-Type: application/dicom',
+			'Accept: multipart/related;type=application/dicom', 
+			// 'Content-Type: application/dicom',
 			'Authorization: Bearer ' . $token->access_token
 		));       
 		curl_setopt($ch1, CURLOPT_ENCODING, 'UTF-8');
 		// curl_setopt($ch1, CURLOPT_USERPWD, $this->config['login'] . ":" . $this->config['pass']);
-		curl_setopt($ch1, CURLOPT_URL, "http://".$this->config['host'].":8080/dcm4chee-arc/aets/DCM4CHEE/rs/studies/".$study."?accept=application/zip");       
+		curl_setopt($ch1, CURLOPT_URL, "http://".$this->config['host'].":8080/dcm4chee-arc/aets/DCM4CHEE/rs/studies/".$study."/series/".$series."/instances/".$obj."");       
 		curl_setopt($ch1, CURLOPT_RETURNTRANSFER, true);
 		$response = curl_exec( $ch1 );
-		$fd = fopen("../log.txt", 'w') or die("не удалось создать файл");
-		fwrite($fd, str_replace("\r\n" , " " , $response));
+		$fd = fopen("../files/".str_replace("." , "" , $study).".dcm", 'w') or die("не удалось создать файл");
+		fwrite($fd, $response);
 		fclose($fd);
+
+		$file_ot = file("../files/".str_replace("." , "" , $study).".dcm");
+		$file = array_splice($file_ot,4);
+		file_put_contents("../files/".str_replace("." , "" , $study).".dcm" , implode("" , $file));
+		
 		curl_close( $ch1 );
-		return $response;
+		return "/files/".str_replace("." , "" , $study).".dcm";
+		// header("location: /download.php?file=".str_replace("." , "" , $study).".dcm");
 	}
 
 	public function prettyDate($str = null,$sep = null)	{
@@ -294,7 +300,7 @@ class dcm4chee {
 		$start = trim($dateArr[0]);
 		if(isset($dateArr[1])){
 			$end = trim($dateArr[1]);
-			$endString = "-".$end[6].$end[7].$end[8].$end[9].$end[3].$end[4].$end[0].$end[1];
+			$endString = "-".$end[6].$end[7].$end[8].$end[9].$end[3].$end[4].$end[0].$end[1];					
 		}
 		return $start[6].$start[7].$start[8].$start[9].$start[3].$start[4].$start[0].$start[1].$endString;
 	}
