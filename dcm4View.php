@@ -1,6 +1,7 @@
 <?php
-header("charset=utf-8");
 
+header("charset=utf-8");
+//error_reporting(E_ALL & ~E_WARNING & ~E_NOTICE);
 function tohttp( $query ){
 
   $query_array = array();
@@ -23,8 +24,6 @@ function getage($str) {
     return "Нет данных";
   }
 }
-
-
 
 session_start();
 ini_set('display_errors', 1);
@@ -82,6 +81,7 @@ $lastdate = "";
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta http-equiv="Cache-Control" content="no-cache" />
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <meta name="description" content="">
   <meta name="author" content="">
@@ -120,6 +120,15 @@ $lastdate = "";
   <div id="wrapper">
     <!-- Sidebar -->
     <ul class="sidebar navbar-nav">
+
+      <li class="nav-item text-light">
+        <a class="nav-link" href="#">
+          <i class="fa fa-user"></i>
+          <span>Пользователь - <?php echo $_SESSION['user'] ?></span>
+        </a>
+        <!-- <a href="#"></a> -->
+      </li>
+
       <li class="nav-item active">
         <a class="nav-link" href="#">
           <i class="fas fa-fw fa-table"></i>
@@ -136,10 +145,16 @@ $lastdate = "";
           <i class="fas fa-fw fa-chart-area"></i>
           <span><?php echo $lng->stat; ?></span></a>
       </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/logout.php">
+          <i class="fas fa-sign-out-alt"></i>
+          <span>Выйти</span>
+        </a>
+      </li>
     </ul>
     <div id="content-wrapper">
       <div class="container-fluid">
-        <?php if (count($studyes) >= 100) : ?>
+        <?php if (@count($studyes) >= 100) : ?>
           <div class="alert alert-warning" role="alert">
             <?php echo $lng->msgLagreOrthank; ?>
             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
@@ -236,8 +251,8 @@ $lastdate = "";
                         foreach($response as $el) {
                           echo "<tr>";
                           echo "<td>".$el->{'00100010'}->Value[0]->Alphabetic."</td>";  //Name patient
-                          echo "<td>".$el->{'00100020'}->Value[0]."</td>";              //ID patient
-                          echo "<td>".$el->{'00100040'}->Value[0]."</td>";              //Sex patient
+                          echo "<td>".$el->{'00100020'}->Value[0]."  ".$el->{'00200013'}->Value[0]."</td>";              //ID patient
+                          echo "<td>".@$el->{'00100040'}->Value[0]."</td>";              //Sex patient
                           // echo "<td>".$el->{'00080020'}->Value[0]."</td>";
                           echo "<td class='age'></td>";
                           // echo "<td>".$el->{'00080020'}->Value[0]."</td>";
@@ -268,7 +283,7 @@ $lastdate = "";
                           echo "<tr>";
                           echo "<td>".$el->{'00100010'}->Value[0]->Alphabetic."</td>";  //Name patient
                           echo "<td>".$el->{'00100020'}->Value[0]."</td>";              //ID patient
-                          echo "<td>".$el->{'00100040'}->Value[0]."</td>";              //Sex patient
+                          echo "<td>".@$el->{'00100040'}->Value[0]."</td>";              //Sex patient
                           echo "<td>".$el->{'00100020'}->Value[0]."</td>";
                           $bd=isset($el->{'00100030'}->Value)?$el->{'00100030'}->Value[0]:"";
                           echo "<td class='bd'>".$db->prettyDate($bd,'-')."</td>";

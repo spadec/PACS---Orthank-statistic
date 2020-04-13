@@ -117,7 +117,7 @@ class dcm4chee {
 		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 		curl_setopt($ch, CURLOPT_POST, 1);
-		curl_setopt($ch, CURLOPT_POSTFIELDS, "grant_type=client_credentials&client_id=curl&client_secret=5df47d2e-c976-49a5-bfcf-b50615691fc4");
+		curl_setopt($ch, CURLOPT_POSTFIELDS, "grant_type=client_credentials&client_id=curl&client_secret=");
 
 		$headers = array();
 		$headers[] = 'Content-Type: application/x-www-form-urlencoded';
@@ -188,16 +188,16 @@ class dcm4chee {
 		curl_setopt($ch1, CURLOPT_URL, "http://".$this->config['host'].":8080/dcm4chee-arc/aets/DCM4CHEE/rs/studies/".$study."/series/".$series."/instances/".$obj."");       
 		curl_setopt($ch1, CURLOPT_RETURNTRANSFER, true);
 		$response = curl_exec( $ch1 );
-		$fd = fopen("../files/".$study.".dcm", 'w') or die("не удалось создать файл");
+		$fd = fopen("../files/".str_replace("." , "" , $study).".dcm", 'w') or die("не удалось создать файл");
 		fwrite($fd, $response);
 		fclose($fd);
 
-		$file_ot = file("../files/".$study.".dcm");
+		$file_ot = file("../files/".str_replace("." , "" , $study).".dcm");
 		$file = array_splice($file_ot,4);
-		file_put_contents("../files/".$study.".dcm" , implode("" , $file));
+		file_put_contents("../files/".str_replace("." , "" , $study).".dcm" , implode("" , $file));
 		
 		curl_close( $ch1 );
-		return "/files/".$study.".dcm";
+		return "/files/".str_replace("." , "" , $study).".dcm";
 		// header("location: /download.php?file=".str_replace("." , "" , $study).".dcm");
 	}
 
